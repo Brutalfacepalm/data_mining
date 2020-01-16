@@ -3,6 +3,16 @@ import scrapy
 from scrapy.http import HtmlResponse
 from jobparser.items import JobparserItem
 
+# 1) Доработать паука в имеющемся проекте, чтобы он формировал item по структуре:
+# *Наименование вакансии
+# *Зарплата от
+# *Зарплата до
+# *Ссылку на саму вакансию
+# *Сайт откуда собрана вакансия
+# И складывал все записи в БД(любую)
+#
+# 2) Создать в имеющемся проекте второго паука по сбору вакансий с сайта superjob. Паука должен формировать item'ы по аналогичной структуре и складывать данные также в БД
+
 
 class HhruSpider(scrapy.Spider):
     name = 'hhru'
@@ -12,14 +22,17 @@ class HhruSpider(scrapy.Spider):
 
     def parse(self, response:HtmlResponse):
         next_page = response.css('a.HH-Pager-Controls-Next::attr(href)').extract_first()
-        yield response.follow(next_page, callback=self.parse)
+        if next_page:
+            yield response.follow(next_page, callback=self.parse)
 
-        vacansy = response.css('div.vacancy-serp div.vacancy-serp-item div.vacancy-serp-item__row_header a.bloko-link::attr(href)').extract()
+        vacansy = response.xpath("//div[@class='vacancy-serp-item__info']//a[@data-qa='vacancy-serp__vacancy-title']/@href").extract()
 
-        for link in vacansy:
-            yield response.follow(link, callback=self.vacansy_parse)
+        if vacansy:
+            for link in vacansy:
+                yield response.follow(link, callback=self.vacansy_parse)
 
     def vacansy_parse(self, response:HtmlResponse):
-        name = response.xpath('//h1[@class=\'header\']//span/text()').extract_first()
-        salary = response.css('div.vacancy-title p.vacancy-salary::text').extract()
-        yield JobparserItem(name=name, salary=salary)
+        url = response.url
+        name = response.xpath("//div[@class=\'bloko-columns-row\']//h1[@data-qa=\'vacancy-title\']//text()").extract_first()
+        salary = response.xpath("//div[@class=\'bloko-columns-row\']//p[@class=\'vacancy-salary\']//text()").extract()
+        yield JobparserItem(link=url, name=name, salary=salary)
