@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="71d7756b-63d9-420e-b77a-e81e8cda7e39" name="Default Changelist" comment="" />
+
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectId" id="1WQB3X9IJXKUCfIWegYKnstigB4" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -33,18 +32,5 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="71d7756b-63d9-420e-b77a-e81e8cda7e39" name="Default Changelist" comment="" />
-      <created>1579071740371</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1579071740371</updated>
-    </task>
-    <servers />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="912" y="298" key="FileChooserDialogImpl" timestamp="1579071763805">
-      <screen x="0" y="0" width="1920" height="1050" />
-    </state>
-    <state x="912" y="298" key="FileChooserDialogImpl/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1579071763805" />
-  </component>
+
 </project>
