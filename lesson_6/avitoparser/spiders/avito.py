@@ -10,7 +10,7 @@ class AvitoSpider(scrapy.Spider):
 
     def __init__(self, section):
         super(AvitoSpider, self).__init__()
-        self.start_urls = [f'{"https://avito.ru/rossiya/"}{section}']
+        self.start_urls = [f'https://avito.ru/rossiya/{section}']
 
     def parse(self, response: HtmlResponse):
         ads_links = response.xpath('//a[@class="snippet-link"]/@href').extract()
@@ -20,4 +20,4 @@ class AvitoSpider(scrapy.Spider):
     def parse_ads(self, response: HtmlResponse):
         name = response.css('h1.title-info-title span.title-info-title-text::text').extract_first()
         photos = response.xpath('//div[contains(@class, "gallery-img-wrapper")]//div[contains(@class, gallery-img-frame)]/@data-url').extract()
-        print(name, photos)
+        yield AvitoparserItem(name=name, photos=photos)

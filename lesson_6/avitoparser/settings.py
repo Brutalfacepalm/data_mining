@@ -69,7 +69,7 @@ CONCURRENT_REQUESTS_PER_IP = 8
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'avitoparser.pipelines.AvitoparserPipeline': 300,
+   'avitoparser.pipelines.AvitoPhotosPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
