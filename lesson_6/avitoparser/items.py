@@ -9,5 +9,6 @@ import scrapy
 
 
 class AvitoparserItem(scrapy.Item):
+    _id = scrapy.Field()
     name = scrapy.Field()
     photos = scrapy.Field()

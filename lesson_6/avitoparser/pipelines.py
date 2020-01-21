@@ -9,10 +9,11 @@ import scrapy
 
 class AvitoPhotosPipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
+        print(item)
         if item['photos']:
             for img in item['photos']:
                 try:
-                    yield scrapy.Request(f'http:{img}')
+                    yield scrapy.Request(img)
                 except Exception as e:
                     print(e)
 
