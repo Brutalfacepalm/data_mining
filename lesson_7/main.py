@@ -16,7 +16,7 @@ def run_database():
 
 def run_browser():
     options = Options()
-    options.add_argument('--headless')
+    options.add_argument('--start-maximized')
 
     driver = webdriver.Chrome(options=options)
     driver.get('https://mail.ru/')
