@@ -1,25 +1,22 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.select import Select
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from pymongo import MongoClient
+import time
 
-
-# 1) Написать программу, которая собирает входящие письма из своего или тестового
-# почтового ящика и сложить данные о письмах в базу данных
-# (от кого, дата отправки, тема письма, текст письма)
 
 def run_database():
-    client= MongoClient('localhost', 27017)
+    client = MongoClient('localhost', 27017)
     db = client.mail_base
     return db
 
+
 def run_browser():
     options = Options()
-    options.add_argument('--start-maximized')
+    options.add_argument('--headless')
 
     driver = webdriver.Chrome(options=options)
     driver.get('https://mail.ru/')
@@ -60,31 +57,37 @@ def get_next_letter(letter):
 
 
 def get_letter_data_and_next_page(driver, wdw, db):
+    time.sleep(1)
     letter_from = wdw.until(
         EC.presence_of_element_located((
             By.CLASS_NAME, 'letter__contact-item'
         ))
-    )
+    ).text
     letter_date = wdw.until(
         EC.presence_of_element_located((
             By.CLASS_NAME, 'letter__date'
         ))
-    )
+    ).text
     letter_title = wdw.until(
         EC.presence_of_element_located((
             By.CLASS_NAME, 'thread__subject_pony-mode'
         ))
-    )
-    # letter_body = driver.find_elements_by_xpath('//td[@class = "bodyContainer_mailru_css_attribute_postfix"]//td[@class="mcnTextContent_mailru_css_attribute_postfix"] | //div[@class="webkit_mailru_css_attribute_postfix"]/table/tbody//tr//tbody')
-    # letter_body = '\n'.join(list(map(lambda x: x.text, letter_body)))
+    ).text
+
     letter_body = wdw.until(
         EC.presence_of_element_located((
-            By.CLASS_NAME, 'letter-body__body-wrapper'
+            By.CLASS_NAME, 'letter-body'
         ))
-    )
-    data = {'from':letter_from.text, 'date':letter_date.text, 'title':letter_title.text, 'text': letter_body.text}
+    ).text
+    data = {'from': letter_from, 'date': letter_date, 'title': letter_title, 'text': letter_body}
 
     db['mail.ru'].update_one({'title': data['title']}, {'$set': data}, upsert=True)
+
+    try:
+        driver.find_element_by_class_name('portal-menu-element_next').find_element_by_class_name('button2_disabled')
+        return None
+    except:
+        pass
 
     get_next_letter(driver.find_element_by_tag_name('html'))
 
@@ -101,12 +104,14 @@ def run_parse():
 
     driver = run_browser()
     db = run_database()
-    wdw = WebDriverWait(driver, 20)
+    wdw = WebDriverWait(driver, 10)
     driver = login(driver, wdw, LOGIN, PASSWORD)
     driver = get_first_letter(driver, wdw)
 
     while True:
         driver = get_letter_data_and_next_page(driver, wdw, db)
+        if driver == None:
+            break
     return driver
 
 
